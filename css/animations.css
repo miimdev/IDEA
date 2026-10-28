@@ -17,3 +17,11 @@ html[dir=rtl] .marquee-inner{animation-direction:reverse}
 .scroll-hint svg{animation:scroll-bob 2s ease-in-out infinite}
 .hero-doodle path{stroke-dasharray:180;stroke-dashoffset:180;animation:line-draw 1.5s .8s var(--ease-out) forwards}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}html.js-animate .reveal-ready,html.js-animate .split-ready .word{opacity:1!important;transform:none!important}.page-curtain,.cursor-ring,.cursor-dot{display:none!important}}
+.button-ripple{position:absolute;width:10px;height:10px;border-radius:50%;background:#fff6;pointer-events:none;transform:translate(-50%,-50%) scale(0);animation:ripple .6s ease-out forwards}
+@keyframes ripple{to{opacity:0;transform:translate(-50%,-50%) scale(25)}}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .4s var(--ease-in-out) both}
+::view-transition-new(root){animation:vt-in .6s var(--ease-out) both}
+@keyframes vt-out{to{opacity:0;transform:translateY(-2%)}}
+@keyframes vt-in{from{opacity:0;transform:translateY(2%)}}
+@media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}

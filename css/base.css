@@ -48,3 +48,4 @@ html[lang=en] .eyebrow{letter-spacing:.15em;text-transform:uppercase}
 .icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
 html[dir=rtl] .arrow-icon{transform:scaleX(-1)}
 @media(max-width:720px){.section-head{align-items:start;flex-direction:column;margin-bottom:32px;gap:18px}.section-intro{grid-template-columns:1fr;gap:20px}.section-intro .section-head-copy{justify-self:start}.section{padding-block:82px}}
+.noscript-nav{padding:18px var(--gutter);border-bottom:1px solid var(--border);font-size:13px;line-height:2.4}.noscript-nav a{color:#c4b5fd}
