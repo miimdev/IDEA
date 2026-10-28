@@ -37,3 +37,11 @@ html[dir=ltr] .testimonial-controls [data-testimonial-prev] .arrow-icon{transfor
 @keyframes confetti{from{opacity:1;transform:translate(0,0) rotate(0)}to{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
 .hero-canvas{opacity:.32}
 .testimonial-viewport{direction:ltr}
+/* Keep the hero aligned with the same inset as every other section. */
+.hero-grid{width:min(calc(100% - 2 * var(--gutter)),var(--container))}
+@media(max-width:760px){.hero-caption{direction:ltr}.hero-caption .en-label{font-size:8px}}
+.hero-ring text{direction:ltr;unicode-bidi:isolate}
+.clients-track{animation:client-drift 22s ease-in-out infinite alternate}
+@keyframes client-drift{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
+.not-found-cube{width:80px;height:80px;margin:0 auto 18px;border-radius:15px;animation:float 4s ease-in-out infinite}
+.contact-method strong[data-i18n=sendViaForm]{font-family:inherit;direction:inherit}

@@ -9,7 +9,7 @@ export async function readCollection(table) {
   if (!isConfigured()) return null;
   if (!['projects','services','blog_posts','team_members','testimonials','clients'].includes(table)) return null;
   try {
-    const response = await fetch(`${url}/rest/v1/${table}?select=*`, {headers:headers(), signal:AbortSignal.timeout(5000)});
+    const response = await fetch(`${url}/rest/v1/${table}?select=*&order=sort_order.asc`, {headers:headers(), signal:AbortSignal.timeout(5000)});
     if (!response.ok) throw new Error('Public content request failed');
     const data = await response.json();
     return Array.isArray(data) && data.length ? data : null;

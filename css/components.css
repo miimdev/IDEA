@@ -55,3 +55,9 @@ html[lang=en] .brand-name{font-size:13px;letter-spacing:-.04em}html[lang=en] .br
 @media(max-width:760px){.desktop-nav{display:none}.menu-toggle{display:flex}.header-actions{gap:18px}.footer-main{grid-template-columns:1fr 1fr;gap:40px 24px}.footer-bottom{align-items:start;flex-direction:column}.service-card{min-height:245px;padding:23px}}
 @media(max-width:430px){.footer-main{grid-template-columns:1fr}.footer-about{grid-column:auto}.brand-name{font-size:16px}}
 .work-card>a{display:block}
+/* Keep the honeypot out of view without creating an RTL horizontal overflow. */
+.honeypot{left:auto!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;margin:-1px!important}
+.footer-about .demo-note{margin-top:16px;color:#aaa5b6;font-size:11px}
+.card-number,.section-kicker .en-label{color:#96939f}
+.field input::placeholder,.field textarea::placeholder{color:#97929e}
+.field:focus-within>label{color:#c4b5fd;transform:translateY(-3px);transition:transform .25s,color .25s}

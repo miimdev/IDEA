@@ -34,3 +34,19 @@ export function initScroll() {
   update();
   return {lenis,refresh(){trigger?.refresh();},destroy(){lenis?.destroy();}};
 }
+
+/* Tie ambient loops to scroll velocity without animating layout properties. */
+export function initVelocityMotion() {
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  let previous=scrollY,resetTimer;
+  const setRate=rate=>document.querySelectorAll('.marquee-inner,.hero-ring').forEach(el=>{
+    el.getAnimations().filter(a=>a.animationName==='marquee'||a.animationName==='orbit').forEach(animation=>{
+      if(typeof animation.updatePlaybackRate==='function')animation.updatePlaybackRate(rate);else animation.playbackRate=rate;
+    });
+  });
+  addEventListener('scroll',()=>{
+    const delta=scrollY-previous;previous=scrollY;if(Math.abs(delta)<1)return;
+    setRate(Math.sign(delta)*(1+Math.min(2,Math.abs(delta)/45)));
+    clearTimeout(resetTimer);resetTimer=setTimeout(()=>setRate(1),260);
+  },{passive:true});
+}

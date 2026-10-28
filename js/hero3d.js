@@ -2,11 +2,14 @@
 export async function initHero3D() {
   const canvas=document.querySelector('.hero-canvas'), container=document.querySelector('.hero-visual');
   if(!canvas||!container || matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.deviceMemory && navigator.deviceMemory<=2) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=2)) return;
+  // Probe before constructing a renderer so unsupported devices fall back silently.
+  try { const probe=document.createElement('canvas'); if(!probe.getContext('webgl2') && !probe.getContext('webgl')) return; } catch { return; }
   let THREE;
   try { THREE=await import('../assets/vendor/three.module.js'); }
   catch { try { THREE=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js'); } catch { return; } }
   let renderer;
   try { renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'}); } catch { return; }
+  canvas.dataset.webglReady='true';
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
   renderer.setClearColor(0x000000,0);
   renderer.outputColorSpace=THREE.SRGBColorSpace;
