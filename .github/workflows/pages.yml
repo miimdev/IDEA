@@ -1,0 +1,47 @@
+name: Deploy static website to GitHub Pages
+
+on:
+  push:
+    branches:
+      - arena/b0b6b9a3-idea
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify static pages and database migration
+        run: node --experimental-default-type=module tests/static.mjs
+      - name: Prepare public files
+        run: |
+          mkdir -p _site
+          cp index.html services.html work.html project.html about.html blog.html contact.html 404.html robots.txt sitemap.xml .nojekyll _site/
+          cp -a css js assets _site/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
