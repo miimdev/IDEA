@@ -9,7 +9,14 @@ for(const page of pages){
  console.log(`✓ ${page}`);
 }
 for(const [key,count] of Object.entries({projects:8,services:4,blog_posts:6,team_members:4,testimonials:5,clients:8}))assert.equal(localData[key].length,count,key);
+assert.equal(new Set(localData.projects.map(project=>project.cover)).size,8,'each project has its own cover');
+for(const item of [...localData.projects,...localData.blog_posts]){
+ for(const image of [item.cover,...(item.images||[])]) await access(new URL(`../${image}`,import.meta.url));
+}
+await access(new URL('../assets/studio.webp',import.meta.url));
 const sql=await readFile(new URL('../supabase/migrations/202610280001_initial.sql',import.meta.url),'utf8');
 for(const table of ['projects','services','blog_posts','team_members','testimonials','clients','contact_messages','newsletter_subscribers'])assert.match(sql,new RegExp(`ALTER TABLE public\\.${table} ENABLE ROW LEVEL SECURITY`));
 assert.doesNotMatch(sql,/GRANT SELECT ON public\.(contact_messages|newsletter_subscribers)/);
-console.log('✓ bilingual sample data and RLS migration');
+const refresh=await readFile(new URL('../supabase/migrations/20261028122349_refresh_sample_art.sql',import.meta.url),'utf8');
+assert.match(refresh,/p\.cover = v\.old_cover AND p\.images = v\.old_images/);
+console.log('✓ bilingual sample data, artwork and guarded RLS migrations');

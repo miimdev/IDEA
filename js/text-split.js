@@ -1,7 +1,10 @@
 /* A tiny accessible word splitter; no paid SplitText dependency. */
 export function splitText(scope=document) {
   scope.querySelectorAll('[data-split]').forEach(element => {
-    const text=element.textContent.trim();
+    // The catalog can re-render after a remote fetch. Reuse the accessible
+    // source rather than concatenating it with the already-split visible words.
+    const source=element.querySelector(':scope > .sr-only');
+    const text=(source ? source.textContent : element.textContent).trim();
     if (!text) return;
     element.removeAttribute('aria-label');
     element.textContent='';
