@@ -45,3 +45,9 @@ html[dir=ltr] .testimonial-controls [data-testimonial-prev] .arrow-icon{transfor
 @keyframes client-drift{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
 .not-found-cube{width:80px;height:80px;margin:0 auto 18px;border-radius:15px;animation:float 4s ease-in-out infinite}
 .contact-method strong[data-i18n=sendViaForm]{font-family:inherit;direction:inherit}
+.section-kicker .en-label{color:#96939f}
+.filter-button.is-active,.filter-button:hover{background:#7949d1;border-color:#7949d1}
+.field label{position:absolute;top:-10px;inset-inline-start:12px;z-index:1;margin:0;padding-inline:6px;background:var(--bg);line-height:1.5}
+.form-noscript{font-size:13px;color:#c4b5fd}
+.field select{padding-inline-end:45px}
+html[dir=rtl] .field select{background-position:20px 26px,25px 26px}

@@ -6,11 +6,12 @@
   --border: rgba(255,255,255,.08);
   --text: #f5f5f7;
   --text-muted: #a5a5ae;
-  --primary: #a78bfa;
+  --primary: #8b5cf6;
+  --primary-soft: #a78bfa;
   --primary-solid: #8b5cf6;
   --primary-strong: #7c4dcc;
   --primary-glow: rgba(139,92,246,.35);
-  --gradient-brand: linear-gradient(125deg,#c4b5fd 0%,#8b5cf6 53%,#6d3fd1 100%);
+  --gradient-brand: linear-gradient(125deg,#a78bfa 0%,#8b5cf6 53%,#6d3fd1 100%);
   --font-fa: 'Vazirmatn', sans-serif;
   --font-en: 'Inter', sans-serif;
   --container: 1280px;

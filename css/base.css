@@ -29,7 +29,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .container{width:min(calc(100% - 2 * var(--gutter)),var(--container));margin-inline:auto}
 .section{padding-block:clamp(88px,11vw,160px)}
 .section--tight{padding-block:clamp(70px,8vw,116px)}
-.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--primary);font-size:12px;font-weight:700;letter-spacing:.025em}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--primary-soft);font-size:12px;font-weight:700;letter-spacing:.025em}
 .eyebrow::before{content:'';width:7px;height:7px;background:var(--primary-solid);box-shadow:0 0 16px var(--primary-solid);transform:rotate(45deg);flex:none}
 html[lang=en] .eyebrow{letter-spacing:.15em;text-transform:uppercase}
 .en-label{font-family:var(--font-en);font-size:10px;font-weight:600;letter-spacing:.17em;text-transform:uppercase;color:#888893;direction:ltr}

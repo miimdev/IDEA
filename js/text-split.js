@@ -3,8 +3,9 @@ export function splitText(scope=document) {
   scope.querySelectorAll('[data-split]').forEach(element => {
     const text=element.textContent.trim();
     if (!text) return;
-    element.setAttribute('aria-label',text);
+    element.removeAttribute('aria-label');
     element.textContent='';
+    const accessible=document.createElement('span');accessible.className='sr-only';accessible.textContent=text;element.append(accessible);
     text.split(/(\s+)/).forEach(part => {
       if (/^\s+$/.test(part)) { element.append(document.createTextNode(part)); return; }
       const clip=document.createElement('span');

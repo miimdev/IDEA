@@ -61,3 +61,9 @@ html[lang=en] .brand-name{font-size:13px;letter-spacing:-.04em}html[lang=en] .br
 .card-number,.section-kicker .en-label{color:#96939f}
 .field input::placeholder,.field textarea::placeholder{color:#97929e}
 .field:focus-within>label{color:#c4b5fd;transform:translateY(-3px);transition:transform .25s,color .25s}
+/* The darker purple keeps white button labels above the WCAG AA contrast threshold. */
+.button--primary,.filter-button.is-active{background:#7949d1;border-color:#7949d1}
+.button--primary:hover{background:#7041c6}
+.preloader{transition-duration:.65s}
+.service-card::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(130deg,transparent 8%,#b8a1f8 48%,transparent 90%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:0;transition:opacity .4s}
+.service-card:hover::after{opacity:.75}

@@ -23,7 +23,7 @@ const icons={
  branding:'<path d="M12 2 21 7v10l-9 5-9-5V7l9-5Z"/><path d="m3 7 9 5 9-5M12 12v10M7.5 4.5l9 5"/>',
 };
 const icon=name=>`<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name]||icons.branding}</svg>`;
-const brand=()=>`<a class="brand" href="index.html" aria-label="Idehpardazan home">${mark}<span class="brand-copy"><span class="brand-name" data-i18n="brand">ایده‌پردازان</span><span class="brand-sub" data-i18n="brandSub">آژانس خلاقیت</span></span></a>`;
+const brand=()=>`<a class="brand" href="index.html">${mark}<span class="brand-copy"><span class="brand-name" data-i18n="brand">ایده‌پردازان</span><span class="brand-sub" data-i18n="brandSub">آژانس خلاقیت</span></span></a>`;
 const links=[['home','index.html'],['services','services.html'],['work','work.html'],['about','about.html'],['blog','blog.html']];
 const currentPage=()=>({project:'work','not-found':''}[document.body.dataset.page] ?? document.body.dataset.page);
 function injectChrome(){
@@ -59,20 +59,11 @@ function initHeader(){
   addEventListener('languagechange',()=>requestAnimationFrame(()=>moveIndicator(active())));
   requestAnimationFrame(()=>moveIndicator(active()));
 }
-function startPreloader(){
-  if(reduced)return Promise.resolve();
-  try {if(sessionStorage.getItem('idea-loaded'))return Promise.resolve();sessionStorage.setItem('idea-loaded','1');}catch{}
-  return new Promise(resolve=>{
-    const loader=document.createElement('div');loader.className='preloader';loader.setAttribute('aria-hidden','true');
-    loader.innerHTML=`<div class="preloader-content"><svg class="preloader-logo" viewBox="0 0 48 52"><path d="M24 2 45 14v24L24 50 3 38V14zM3 14l21 12 21-12M24 26v24"/></svg><span class="preloader-number">00</span><span class="preloader-count">IDEAS INTO IMPACT / <span>0</span>%</span></div>`;
-    document.body.append(loader);const n=loader.querySelector('.preloader-number'),small=loader.querySelector('.preloader-count span');const start=performance.now(),duration=1100;
-    function tick(now){const progress=Math.min(1,(now-start)/duration);const count=Math.round((1-Math.pow(1-progress,2))*100);n.textContent=String(count).padStart(2,'0');small.textContent=count;if(progress<1)requestAnimationFrame(tick)}requestAnimationFrame(tick);
-    setTimeout(()=>{loader.classList.add('is-done');resolve();setTimeout(()=>loader.remove(),1000)},1200);
-  });
-}
+function startPreloader(){return window.__preloaderDone||Promise.resolve();}
+
 function projectCard(project){
   const lang=getLanguage(),title=localized(project,'title',lang),summary=localized(project,'summary',lang);
-  return `<article class="work-card" data-category="${esc(project.category)}"><a href="project.html?slug=${encodeURIComponent(project.slug)}" data-cursor="view" aria-label="${esc(title)}"><div class="work-card-image"><img src="${safeImage(project.cover)}" width="1024" height="1024" loading="lazy" decoding="async" alt="${esc(title)}"><span class="work-overlay">${arrow}</span></div><div class="work-card-meta"><div><h3>${esc(title)}</h3><p>${esc(summary)}</p></div><span class="work-card-year">${esc(project.year)}</span></div></a></article>`;
+  return `<article class="work-card" data-category="${esc(project.category)}"><a href="project.html?slug=${encodeURIComponent(project.slug)}" data-cursor="view"><div class="work-card-image"><img src="${safeImage(project.cover)}" width="1024" height="1024" loading="lazy" decoding="async" alt=""><span class="work-overlay">${arrow}</span></div><div class="work-card-meta"><div><h3>${esc(title)}</h3><p>${esc(summary)}</p></div><span class="work-card-year">${esc(project.year)}</span></div></a></article>`;
 }
 function serviceCard(item,index){
   return `<article class="service-card" data-tilt><div class="service-top"><span class="service-icon">${icon(item.icon)}</span><span class="card-number">${String(index+1).padStart(2,'0')}</span></div><h3>${esc(localized(item,'title'))}</h3><p>${esc(localized(item,'description'))}</p><a class="text-link" href="services.html#${encodeURIComponent(item.slug)}"><span>${esc(t('details'))}</span>${arrow}</a></article>`;
@@ -96,12 +87,26 @@ function renderWork(){
  document.querySelectorAll('[data-filter]').forEach(button=>{button.textContent=categoryLabel(button.dataset.filter);const on=button.dataset.filter===selectedFilter;button.classList.toggle('is-active',on);button.setAttribute('aria-pressed',String(on));});
  grid.querySelectorAll('.work-card').forEach(card=>card.hidden=selectedFilter!=='all'&&card.dataset.category!==selectedFilter);
 }
+function setDetailSeo({title,description,path,slug,image,type,date}){
+ const url=new URL(path,CONFIG.siteUrl);url.searchParams.set('slug',slug);
+ const canonical=document.querySelector('link[rel="canonical"]');if(canonical)canonical.href=url.href;
+ document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(link=>{const localizedUrl=new URL(url);localizedUrl.searchParams.set('lang',link.hreflang==='en'?'en':'fa');link.href=localizedUrl.href;});
+ const desc=document.querySelector('meta[name="description"]');if(desc)desc.content=description;
+ const ogUrl=document.querySelector('meta[property="og:url"]');if(ogUrl)ogUrl.content=url.href;
+ const ogType=document.querySelector('meta[property="og:type"]');if(ogType)ogType.content=type==='Article'?'article':'website';
+ const imageUrl=new URL(image||'assets/og-cover.jpg',CONFIG.siteUrl).href;
+ const ogImage=document.querySelector('meta[property="og:image"]');if(ogImage)ogImage.content=imageUrl;
+ let schema=document.getElementById('detail-schema');if(!schema){schema=document.createElement('script');schema.type='application/ld+json';schema.id='detail-schema';document.head.append(schema)}
+ const json={'@context':'https://schema.org','@type':type,headline:title,name:title,description,url:url.href,inLanguage:getLanguage(),image:imageUrl};if(date)json.datePublished=date;
+ schema.textContent=JSON.stringify(json);
+}
 function renderProject(){
  const mount=document.querySelector('[data-project-detail]');if(!mount)return;
  const slug=new URLSearchParams(location.search).get('slug');const project=catalog.projects.find(p=>p.slug===slug);
  if(!project){mount.innerHTML=`<div class="page-hero"><span class="eyebrow">${esc(t('workEyebrow'))}</span><h1>${esc(t('projectMissing'))}</h1><p><a class="text-link" href="work.html">${arrow}<span>${esc(t('projectBack'))}</span></a></p></div>`;return;}
  const i=catalog.projects.indexOf(project),next=catalog.projects[(i+1)%catalog.projects.length],title=localized(project,'title');
  document.title=`${title} | ${getLanguage()==='fa'?'ایده‌پردازان':'Idehpardazan'}`;
+ setDetailSeo({title,description:localized(project,'summary'),path:'project.html',slug:project.slug,image:project.cover,type:'CreativeWork'});
  const gallery=(Array.isArray(project.images)&&project.images.length?project.images:[project.cover]).slice(0,4);
  mount.innerHTML=`<div class="project-topline"><a class="text-link" href="work.html">${arrow}<span>${esc(t('projectBack'))}</span></a><span class="en-label">SELECTED WORK / ${String(i+1).padStart(2,'0')}</span></div><span class="eyebrow">${esc(categoryLabel(project.category))}</span><h1 data-split>${esc(title)}</h1><p class="project-lead">${esc(localized(project,'summary'))}</p><img class="project-cover" src="${safeImage(project.cover)}" width="1200" height="800" alt="${esc(title)}"><div class="project-details"><dl class="project-info"><div><dt>${esc(t('projectClient'))}</dt><dd>${esc(localized(project,'client'))}</dd></div><div><dt>${esc(t('projectYear'))}</dt><dd>${esc(project.year)}</dd></div><div><dt>${esc(t('projectService'))}</dt><dd>${esc(categoryLabel(project.category))}</dd></div><div><dt>${esc(t('projectTech'))}</dt><dd>${esc((project.technologies||[]).join(' · '))}</dd></div></dl><div class="project-story"><span class="eyebrow">${esc(t('projectStory'))}</span><h2>${esc(localized(project,'summary'))}</h2><p>${esc(localized(project,'description'))}</p></div></div><div class="project-gallery">${gallery.map((img,n)=>`<img src="${safeImage(img)}" width="1000" height="800" loading="lazy" alt="${esc(title)} — ${n+1}">`).join('')}</div><a class="project-next" href="project.html?slug=${encodeURIComponent(next.slug)}" data-drag-next><div><span class="eyebrow">${esc(t('projectNext'))}</span><h2>${esc(localized(next,'title'))}</h2></div><span class="button button--round" aria-hidden="true">${arrow}</span></a>`;
 }
@@ -114,6 +119,7 @@ function renderBlog(){
  list.hidden=true;article.hidden=false;const post=catalog.blog_posts.find(p=>p.slug===slug);
  if(!post){article.innerHTML=`<div class="page-hero container"><h1>${esc(t('articleMissing'))}</h1><p><a href="blog.html" class="text-link">${esc(t('backBlog'))} ${arrow}</a></p></div>`;return;}
  document.title=`${localized(post,'title')} | ${getLanguage()==='fa'?'ایده‌پردازان':'Idehpardazan'}`;
+ setDetailSeo({title:localized(post,'title'),description:localized(post,'excerpt'),path:'blog.html',slug:post.slug,image:post.cover,type:'Article',date:post.published_at});
  const date=new Date(post.published_at);const dateText=Number.isNaN(date.getTime())?'':new Intl.DateTimeFormat(getLanguage()==='fa'?'fa-IR':'en',{year:'numeric',month:'long',day:'numeric'}).format(date);
  const body=String(localized(post,'body')).split(/\n\s*\n/).map(p=>`<p>${esc(p)}</p>`).join('');
  article.innerHTML=`<article class="article page-hero container"><a class="text-link" href="blog.html">${arrow}<span>${esc(t('backBlog'))}</span></a><div style="margin-top:45px"><span class="eyebrow">${esc(localized(post,'category'))}</span><h1>${esc(localized(post,'title'))}</h1><div class="article-meta">${esc(dateText)} &nbsp; · &nbsp; ${esc(post.read_minutes)} ${esc(t('readTime'))}</div><img class="article-cover" src="${safeImage(post.cover)}" width="1000" height="700" alt=""><div class="article-body">${body}</div></div></article>`;
@@ -201,11 +207,14 @@ function setMetaForLanguage(){const description=document.querySelector('meta[nam
 injectChrome();applyTranslations();renderPage();splitText();initHeader();initTransitions();initCursor(()=>t('view'));initMicroInteractions();initForms();initFilters();initTestimonials();initCountersAndSteps();initArticleProgress();initDragNext();scrollController=initScroll();initVelocityMotion();setupMotion();setMetaForLanguage();
 startPreloader().then(()=>revealSplit(document.querySelector('.hero-copy')||document));
 window.addEventListener('languagechange',()=>{renderPage();splitText();setupMotion();setMetaForLanguage();revealSplit(document.querySelector('.hero-copy')||document);scrollController?.refresh();});
-if(document.body.dataset.page==='home')import('./hero3d.js').then(m=>m.initHero3D()).catch(()=>{});
+if(document.body.dataset.page==='home'&&!reduced){
+ const load3d=()=>setTimeout(()=>{if('requestIdleCallback' in window)requestIdleCallback(()=>import('./hero3d.js').then(m=>m.initHero3D()).catch(()=>{}),{timeout:2500});else import('./hero3d.js').then(m=>m.initHero3D()).catch(()=>{});},1200);
+ if(document.readyState==='complete')load3d();else addEventListener('load',load3d,{once:true});
+}
 if(isConfigured()){
  const needed={home:['services','projects','clients','testimonials'],services:['services'],work:['projects'],project:['projects'],about:['team_members'],blog:['blog_posts'],contact:[], 'not-found':[]}[document.body.dataset.page]||[];
- Promise.all(needed.map(async key=>[key,await readCollection(key)])).then(results=>{
+ setTimeout(()=>Promise.all(needed.map(async key=>[key,await readCollection(key)])).then(results=>{
   let changed=false;results.forEach(([key,items])=>{if(items&&items.length){catalog[key]=items;changed=true;}});
   if(changed){renderPage();splitText();setupMotion();setMetaForLanguage();scrollController?.refresh();}
- });
+ }),900);
 }

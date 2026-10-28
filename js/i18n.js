@@ -41,7 +41,7 @@ export function applyTranslations(root=document) {
   root.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.setAttribute('placeholder',t(el.dataset.i18nPlaceholder)); });
   root.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label',t(el.dataset.i18nAria)); });
   document.querySelectorAll('.lang-toggle').forEach(el => {
-    el.setAttribute('aria-label',t('language'));
+    el.setAttribute('aria-label',`FA / EN — ${t('language')}`);
     el.querySelectorAll('[data-language]').forEach(part => part.classList.toggle('active',part.dataset.language===getLanguage()));
   });
   const meta = document.querySelector('meta[name="description"]');

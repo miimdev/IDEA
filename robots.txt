@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://miimdev.github.io/IDEA/sitemap.xml
