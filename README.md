@@ -2,7 +2,7 @@
 
 وب‌سایت دو‌زبانهٔ یک استودیوی خلاقیت؛ با طراحی تاریک، محتوای فارسی و انگلیسی، تجربه‌های تعاملی و مسیرهای سازگار با GitHub Pages. سایت بدون فریم‌ورک یا مرحلهٔ build ساخته شده است.
 
-- **نشانی در نظر گرفته‌شده برای GitHub Pages:** https://miimdev.github.io/IDEA/ — انتشار فعلاً در انتظار مجوز Pages است (خطای 403). پیش‌نمایش موقت از پنل Arena در دسترس است.
+- **سایت منتشرشده در GitHub Pages:** https://miimdev.github.io/IDEA/ — انتشار شاخهٔ کاری با GitHub Actions تأیید شده است. پیش‌نمایش موقت Arena مستقل از سایت عمومی است.
 - **مخزن و شاخهٔ کار:** https://github.com/miimdev/IDEA/tree/arena/b0b6b9a3-idea
 - **پروژهٔ Supabase:** https://supabase.com/dashboard/project/jmpwryddrxmuwzmbmhsb
 
@@ -46,4 +46,4 @@ python3 -m http.server 8000
 
 ## استقرار
 
-گردش‌کار `.github/workflows/pages.yml` در هر push همین شاخه، فایل‌های استاتیک را بررسی و به‌صورت artifact با GitHub Actions منتشر می‌کند؛ شاخهٔ جداگانه‌ای برای انتشار ساخته نمی‌شود. برای استقرار، GitHub Pages باید قبلاً در تنظیمات مخزن با منبع «GitHub Actions» فعال شده باشد. فعال‌سازی اولیه با اتصال فعلی GitHub خطای مجوز 403 داد و نیازمند دسترسی مدیریت Pages است. برای دامنه یا مسیر جدید، `siteUrl` در `js/config.js` و نشانی‌های canonical/OG در HTML را به‌روزرسانی کنید.
+گردش‌کار `.github/workflows/pages.yml` در هر push همین شاخه، فایل‌های استاتیک را بررسی و به‌صورت artifact با GitHub Actions منتشر می‌کند؛ شاخهٔ جداگانه‌ای برای انتشار ساخته نمی‌شود. GitHub Pages برای این مخزن فعال است و آخرین انتشار با موفقیت انجام شده است. برای دامنه یا مسیر جدید، `siteUrl` در `js/config.js` و نشانی‌های canonical/OG در HTML را به‌روزرسانی کنید.

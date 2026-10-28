@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile,access} from 'node:fs/promises';
+import {runInNewContext} from 'node:vm';
 import {localData} from '../js/data.js';
 const pages=['index.html','services.html','work.html','project.html','about.html','blog.html','contact.html','404.html'];
 for(const page of pages){
@@ -19,4 +20,11 @@ for(const table of ['projects','services','blog_posts','team_members','testimoni
 assert.doesNotMatch(sql,/GRANT SELECT ON public\.(contact_messages|newsletter_subscribers)/);
 const refresh=await readFile(new URL('../supabase/migrations/20261028122349_refresh_sample_art.sql',import.meta.url),'utf8');
 assert.match(refresh,/p\.cover = v\.old_cover AND p\.images = v\.old_images/);
-console.log('✓ bilingual sample data, artwork and guarded RLS migrations');
+// A requestAnimationFrame timestamp may precede performance.now() on its first frame.
+const number={textContent:''},percentage={textContent:''},frames=[];
+const loader={setAttribute(){},querySelector(selector){return selector==='.preloader-number'?number:percentage;},classList:{add(){}},remove(){}};
+const preloader=await readFile(new URL('../js/preloader.js',import.meta.url),'utf8');
+runInNewContext(preloader,{window:{},document:{createElement:()=>loader,body:{append(){}}},matchMedia:()=>({matches:false}),sessionStorage:{getItem:()=>null,setItem(){}},performance:{now:()=>1000},requestAnimationFrame:callback=>frames.push(callback),setTimeout(){}});
+frames.shift()(500);assert.equal(number.textContent,'00');assert.equal(percentage.textContent,0);
+frames.shift()(1650);assert.equal(number.textContent,'100');assert.equal(percentage.textContent,100);
+console.log('✓ bilingual sample data, artwork, preloader and guarded RLS migrations');

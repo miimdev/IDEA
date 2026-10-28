@@ -9,7 +9,7 @@
   document.body.append(loader);
   window.__preloaderDone=new Promise(resolve=>{
     const number=loader.querySelector('.preloader-number'),percentage=loader.querySelector('.preloader-count span'),start=performance.now();
-    function tick(now){const progress=Math.min(1,(now-start)/650),value=Math.round((1-Math.pow(1-progress,2))*100);number.textContent=String(value).padStart(2,'0');percentage.textContent=value;if(progress<1)requestAnimationFrame(tick);}
+    function tick(now){const progress=Math.max(0,Math.min(1,(now-start)/650)),value=Math.round((1-Math.pow(1-progress,2))*100);number.textContent=String(value).padStart(2,'0');percentage.textContent=value;if(progress<1)requestAnimationFrame(tick);}
     requestAnimationFrame(tick);
     setTimeout(()=>{loader.classList.add('is-done');resolve();setTimeout(()=>loader.remove(),750)},750);
   });
